@@ -11,10 +11,11 @@ private:
         node* left;
         node* right;
         int balance;
+        node* previous;
         node(int k):key(k){}
     };
 
-    upin();
+    void upin();
 
 
 
