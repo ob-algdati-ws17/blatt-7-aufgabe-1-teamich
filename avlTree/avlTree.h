@@ -6,23 +6,43 @@
 #define BLATT_7_AUFGABE_1_TEAMICH_AVLTREE_H
 class avlTree{
 private:
-    struct node{
+    struct node {
         const int key;
-        node* left;
-        node* right;
+        node *left;
+        node *right;
         int balance;
-        node* previous;
-        node(int k):key(k){}
+        node *previous;
+
+        node(const int key, node* previous);
+
+        node(const int key, node* previous, node* left, node* right, int balance);
+
+        ~node();
+
+        std::vector<int> *preorder() const;  // (Hauptreihenfolge)
+        std::vector<int> *inorder() const;   // (Symmetrische Reihenfolge)
+        std::vector<int> *postorder() const; // (Nebenreihenfolge)
+
     };
+    void upIn();
 
-    void upin();
+    void upOut();
 
+    void rotateLeft();
 
+    void rotateRight();
 
 public:
-    bool insert();
-    node get();
-    bool contains();
-    void remove();
+    ~avlTree();
+
+    bool insert(const int key);
+
+    bool search(const int key);
+
+    void remove(const int key);
+
+    std::vector<int> *preOrder() const;  // (Hauptreihenfolge)
+    std::vector<int> *inOrder() const;   // (Symmetrische Reihenfolge)
+    std::vector<int> *postOrder() const; // (Nebenreihenfolge)
 };
 #endif //BLATT_7_AUFGABE_1_TEAMICH_AVLTREE_H

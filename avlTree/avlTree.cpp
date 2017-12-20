@@ -2,15 +2,28 @@
 // Created by Marti on 19.12.2017.
 //
 #include "avlTree.h"
-long avlTree::upin() {
+void avlTree::upIn() {
 
 }
+
+void avlTree::upOut() {
+
+}
+
+void avlTree::rotateLeft() {
+
+}
+
+void avlTree::rotateRight() {
+
+}
+
 
 bool avlTree::contains() {
 
 }
 
-node avlTree::get() {
+bool avlTree::search(const int key) {
 
 }
 
