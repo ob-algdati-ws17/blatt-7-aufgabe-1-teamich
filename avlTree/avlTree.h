@@ -19,21 +19,28 @@ private:
 
         ~node();
 
+        void calculateBalance();
+
         std::vector<int> *preorder() const;  // (Hauptreihenfolge)
         std::vector<int> *inorder() const;   // (Symmetrische Reihenfolge)
         std::vector<int> *postorder() const; // (Nebenreihenfolge)
 
     };
-    void upIn();
 
-    void upOut();
+    node* firstNode;
+
+    void upIn(node *start);
 
     void rotateLeft();
 
     void rotateRight();
 
+    node* searchRecursive (node* start, const int key);
+
 public:
     ~avlTree();
+
+    bool isEmpty();
 
     bool insert(const int key);
 
