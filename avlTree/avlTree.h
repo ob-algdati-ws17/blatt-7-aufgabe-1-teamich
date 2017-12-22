@@ -12,17 +12,13 @@ private:
         int balance = 0;
         node *previous = nullptr;
 
-        node(const int key, node* previous);
+        node(int key, node* previous);
 
-        node(const int key, node* previous, node* left, node* right, int balance);
+        node(int key, node* previous, node* left, node* right, int balance);
 
         ~node();
 
         void calculateBalance();
-
-        //std::vector<int> *preorder() const;  // (Hauptreihenfolge)
-        //std::vector<int> *inorder() const;   // (Symmetrische Reihenfolge)
-        //std::vector<int> *postorder() const; // (Nebenreihenfolge)
 
     };
 
@@ -36,6 +32,10 @@ private:
 
     node* searchRecursive(node *start, int key, bool previous);
 
+    std::vector<int> *inOrder(node* start, std::vector<int>* v) const;
+    std::vector<int> *preOrder(node* start, std::vector<int>* v) const;
+    std::vector<int> *postOrder(node* start, std::vector<int>* v) const;
+
 public:
     ~avlTree();
 
@@ -45,8 +45,8 @@ public:
 
     void remove(int key);
 
-    //std::vector<int> *preOrder() const;  // (Hauptreihenfolge)
-    //std::vector<int> *inOrder() const;   // (Symmetrische Reihenfolge)
-    //std::vector<int> *postOrder() const; // (Nebenreihenfolge)
+    std::vector<int> *preOrder() const;  // (Hauptreihenfolge)
+    std::vector<int> *inOrder() const;   // (Symmetrische Reihenfolge)
+    std::vector<int> *postOrder() const; // (Nebenreihenfolge)
 };
 #endif //BLATT_7_AUFGABE_1_TEAMICH_AVLTREE_H
