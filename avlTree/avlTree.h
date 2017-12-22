@@ -1,7 +1,6 @@
 //
 // Created by Marti on 19.12.2017.
 //
-
 #ifndef BLATT_7_AUFGABE_1_TEAMICH_AVLTREE_H
 #define BLATT_7_AUFGABE_1_TEAMICH_AVLTREE_H
 class avlTree{
@@ -21,35 +20,33 @@ private:
 
         void calculateBalance();
 
-        std::vector<int> *preorder() const;  // (Hauptreihenfolge)
-        std::vector<int> *inorder() const;   // (Symmetrische Reihenfolge)
-        std::vector<int> *postorder() const; // (Nebenreihenfolge)
+        //std::vector<int> *preorder() const;  // (Hauptreihenfolge)
+        //std::vector<int> *inorder() const;   // (Symmetrische Reihenfolge)
+        //std::vector<int> *postorder() const; // (Nebenreihenfolge)
 
     };
 
-    node* firstNode;
+    node* firstNode = nullptr;
 
     void upIn(node *start);
 
-    void rotateLeft();
+    void rotateLeft(node* rotateThis);
 
-    void rotateRight();
+    void rotateRight(node* rotateThis);
 
-    node* searchRecursive (node* start, const int key);
+    node* searchRecursive(node *start, int key, bool previous);
 
 public:
     ~avlTree();
 
-    bool isEmpty();
+    bool insert(int key);
 
-    bool insert(const int key);
+    bool search(int key);
 
-    bool search(const int key);
+    void remove(int key);
 
-    void remove(const int key);
-
-    std::vector<int> *preOrder() const;  // (Hauptreihenfolge)
-    std::vector<int> *inOrder() const;   // (Symmetrische Reihenfolge)
-    std::vector<int> *postOrder() const; // (Nebenreihenfolge)
+    //std::vector<int> *preOrder() const;  // (Hauptreihenfolge)
+    //std::vector<int> *inOrder() const;   // (Symmetrische Reihenfolge)
+    //std::vector<int> *postOrder() const; // (Nebenreihenfolge)
 };
 #endif //BLATT_7_AUFGABE_1_TEAMICH_AVLTREE_H

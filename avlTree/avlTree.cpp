@@ -2,7 +2,9 @@
 // Created by Marti on 19.12.2017.
 //
 #include "avlTree.h"
-
+avlTree::~avlTree() {
+    delete firstNode;
+}
 void avlTree::upIn(node *start) {
     if (start != nullptr && start->previous != nullptr) {
         node *before = start->previous;
@@ -15,10 +17,9 @@ void avlTree::upIn(node *start) {
                 before->balance -= 1;
                 upIn(before);
             } else if (before->balance == -1) {
-                if (start->balance == -1){
+                if (start->balance == -1) {
                     rotateRight(before);
-                }
-                else{
+                } else {
                     rotateLeft(start);
                     rotateRight(before);
                 }
@@ -30,10 +31,9 @@ void avlTree::upIn(node *start) {
                 before->balance += 1;
                 upIn(before);
             } else if (before->balance == -1) {
-                if (start->balance == -1){
+                if (start->balance == -1) {
                     rotateLeft(before);
-                }
-                else{
+                } else {
                     rotateRight(start);
                     rotateLeft(before);
                 }
@@ -42,34 +42,66 @@ void avlTree::upIn(node *start) {
     }
     //============================================================
 }
-
-void avlTree::rotateLeft() {
-    //TODO rotateLeft
+void avlTree::rotateLeft(node *rotate) {
+    node *right = rotate->right;
+    node *before = rotate->previous;
+    if(before == nullptr){
+        firstNode = right;
+        rotate->right = nullptr;
+    }else{
+        if(before->left != rotate){
+            before->right = right;
+        }
+        else{
+            before->left = right;
+        }
+        right->previous = before;
+    }
+    rotate->right = right->left;
+    right->left = rotate;
+    rotate->previous = right;
+    rotate->balance += 1;
+    right->balance += 1;
 }
-
-void avlTree::rotateRight() {
-    //TODO roateRight
+void avlTree::rotateRight(node *rotate) {
+    node *left = rotate->left;
+    node *before = rotate->previous;
+    if(before == nullptr){
+        firstNode = left;
+        rotate->left = nullptr;
+    }else{
+        if(before->left != rotate){
+            before->right = left;
+        }
+        else{
+            before->left = left;
+        }
+        left->previous = before;
+    }
+    rotate->left = left->right;
+    left->right = rotate;
+    rotate->previous = left;
+    rotate->balance += 1;
+    left->balance += 1;
 }
-
 //previous = true:  if the search reaches a leaf it returns the previous node holding the leaf. Only if the tree is empty it returns a nullptr.
 //                  if a node is returned and not nullptr it must be checked if the returned node is the searched for key or a different one.
 //previous = false: if the search reaches a leaf it returns a nullptr. otherwise it returns the node with the searched for key.
-node *avlTree::searchRecursive(node *start, const int key, bool previous) {
+avlTree::node *avlTree::searchRecursive(node *start, const int key, bool previous) {
     if (start == nullptr) return nullptr;
     node *p = start;
-    if (k == p->key) {
+    if (key == p->key) {
         return p;
     } else if (key < p->key) {
         if (p->left == nullptr && !previous) return nullptr;
         if (p->left == nullptr && previous) return p;
-        searchRecursive(p->left, key);
+        searchRecursive(p->left, key,previous);
     } else {
         if (p->right == nullptr && !previous) return nullptr;
         if (p->right == nullptr && previous) return p;
-        searchRecursive(p->right, key);
+        searchRecursive(p->right, key,previous);
     }
 }
-
 bool avlTree::search(const int key) {
     bool notPrevious = false;
     node *searchedNode = searchRecursive(firstNode, key, notPrevious);
@@ -79,7 +111,6 @@ bool avlTree::search(const int key) {
         return true;
     }
 }
-
 bool avlTree::insert(const int key) {
     bool previous = true;
     node *insertNode = searchRecursive(firstNode, key, previous);
@@ -102,21 +133,27 @@ bool avlTree::insert(const int key) {
         }
 
     }
-
-    void avlTree::remove() {
-        //TODO remove
-    }
-
-    void avlTree::node::calculateBalance() {
-        if ((this->right && this->left) == nullptr) {
-            this.balance = 0;
-        } else if (this->right == nullptr) {
-            this->balance = -left->balance;
-        } else if (this->left == nullptr) {
-            this->balance = right->balance;
-        } else {
-            this->balance = right->balance - left->balance;
-        }
+}
+void avlTree::remove(int key) {
+    //TODO remove
+}
+avlTree::node::~node() {
+    delete left;
+    delete right;
+}
+void avlTree::node::calculateBalance() {
+    if (this->right == nullptr && this->left == nullptr) {
+        this->balance = 0;
+    } else if (this->right == nullptr) {
+        this->balance = -left->balance;
+    } else if (this->left == nullptr) {
+        this->balance = right->balance;
+    } else {
+        this->balance = right->balance - left->balance;
     }
 }
-
+avlTree::node::node(const int key, node *previous):key(key),previous(previous) {
+    this->right = nullptr;
+    this->left = nullptr;
+}
+avlTree::node::node(const int key, node *previous, node *left, node *right, int balance):key(key),previous(previous),left(left),right(right){}
