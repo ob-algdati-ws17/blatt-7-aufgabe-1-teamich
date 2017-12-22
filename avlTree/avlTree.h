@@ -7,10 +7,10 @@ class avlTree{
 private:
     struct node {
         const int key;
-        node *left;
-        node *right;
-        int balance;
-        node *previous;
+        node *left = nullptr;
+        node *right = nullptr;
+        int balance = 0;
+        node *previous = nullptr;
 
         node(const int key, node* previous);
 

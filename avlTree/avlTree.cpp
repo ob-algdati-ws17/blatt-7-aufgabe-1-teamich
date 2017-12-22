@@ -115,7 +115,10 @@ bool avlTree::insert(const int key) {
     bool previous = true;
     node *insertNode = searchRecursive(firstNode, key, previous);
     //Only way searchRecursive returns nullPtr (with previous flag = true) is when tree is empty.
-    if (insertNode == nullptr) insertNode = new node(key, nullptr);
+    if (insertNode == nullptr){
+        firstNode = new node(key, nullptr);
+        return true;
+    }
     //If anything else than nullptr is returned check if key already exists or if a previous node was returned.
     if (insertNode->key == key) return false;
     //If key does not exist insert left or right.
@@ -125,13 +128,14 @@ bool avlTree::insert(const int key) {
         if (insertNode->balance != 0) {
             upIn(insertNode);
         }
+        return true;
     } else {
         insertNode->right = new node(key, insertNode);
         insertNode->balance += 1;
         if (insertNode->balance != 1) {
             upIn(insertNode);
         }
-
+        return true;
     }
 }
 void avlTree::remove(int key) {
