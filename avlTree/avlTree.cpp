@@ -4,6 +4,8 @@
 #include <vector>
 #include "avlTree.h"
 
+using namespace std;
+
 //=========================================================================================
 //++++++++++++++++++++++++++++++++Public Methods++++++++++++++++++++++++++++++++++++++++++
 //=========================================================================================
@@ -32,11 +34,7 @@ std::vector<int>* avlTree::inOrder() const {
 bool avlTree::search(const int key) {
     bool notPrevious = false;
     node* searchedNode = searchRecursive(firstNode, key, notPrevious);
-    if (searchedNode == nullptr) {
-        return false;
-    } else {
-        return true;
-    }
+    return searchedNode != nullptr;
 }
 
 bool avlTree::insert(const int key) {
@@ -67,53 +65,23 @@ bool avlTree::insert(const int key) {
     }
 }
 
-bool avlTree::remove(int key) {
+void avlTree::remove(int key) {
     auto searchedNode = searchRecursive(firstNode, key, true);
     if (searchedNode == nullptr) {
-        return false;
+        return;
     } else {
         if (searchedNode->key == key) {
-            auto previous = searchedNode->previous;
             if ((searchedNode->left == nullptr) && (searchedNode->right == nullptr)) {
-                node* other;
-                if (previous->left == searchedNode) {
-                    other = previous->right;
-                } else {
-                    other = previous->left;
-                }
-                if (other == nullptr) {
-                    //Height = 0
-                    delete searchedNode;
-                    upOut(previous);
-                } else if (other->left != nullptr || other->right != nullptr) {
-                    //Height = 2
-                } else {
-                    //Height = 1
-                    previous->calculateBalance();
-                }
+                twoLeafs(searchedNode);
             } else if ((searchedNode->right != nullptr) && (searchedNode->left == nullptr)) {
-                if (previous->left == searchedNode) {
-                    previous->left = searchedNode->right;
-                } else {
-                    previous->right = searchedNode->left;
-                    searchedNode = searchedNode->right;
-                }
-                upOut(previous);
+                leafRight(searchedNode);
             } else if ((searchedNode->left != nullptr) && (searchedNode->right == nullptr)) {
-                if (previous->left == searchedNode) {
-                    previous->left = searchedNode->left;
-                } else {
-                    previous->right = searchedNode->left;
-                    searchedNode = searchedNode->left;
-                }
-                upOut(previous);
+                leafLeft(searchedNode);
             } else {
-                auto symmetricalFollowerKey = searchedNode->right;
-                remove(searchedNode->right->key);
-
+                noLeaf(searchedNode);
             }
         } else {
-            return false;
+            return;
         };
 
     }
@@ -226,11 +194,11 @@ avlTree::node* avlTree::searchRecursive(node* start, const int key, bool previou
 
 std::vector<int>* avlTree::inOrder(avlTree::node* start, std::vector<int>* v) const {
     if (start->left != nullptr) {
-        preOrder(start->left, v);
+        inOrder(start->left, v);
     }
     v->push_back(start->key);
     if (start->right != nullptr) {
-        preOrder(start->right, v);
+        inOrder(start->right, v);
     }
     return v;
 }
@@ -248,14 +216,149 @@ std::vector<int>* avlTree::preOrder(avlTree::node* start, std::vector<int>* v) c
 
 std::vector<int>* avlTree::postOrder(avlTree::node* start, std::vector<int>* v) const {
     if (start->left != nullptr) {
-        preOrder(start->left, v);
+        postOrder(start->left, v);
     }
     if (start->right != nullptr) {
-        preOrder(start->right, v);
+        postOrder(start->right, v);
     }
     v->push_back(start->key);
     return v;
 }
+
+void avlTree::twoLeafs(avlTree::node* removeNode) {
+    auto previous = removeNode->previous;
+    if(firstNode == removeNode){
+        delete removeNode;
+        firstNode = nullptr;
+        return;
+    }
+    node* other;
+    delete removeNode;
+    if(previous->left == removeNode){
+        previous->left = nullptr;
+    }else{
+        previous->right = nullptr;
+    }
+    previous->calculateBalance();
+    if(previous->balance == 0){
+        upOut(previous);
+        return;
+    }else if((previous->balance) == 1 || previous->balance == -1){
+        return;
+    }else if(previous->balance == 2){
+        auto previousRoot = previous->previous;
+        if(previousRoot == nullptr) {
+            removeRotation(previous, removeNode, true);
+        }
+        else if(previous == previousRoot->left){
+            removeRotation(previous, removeNode, true);
+            if(previousRoot->left->balance == 0) upOut(previousRoot);
+            else return;
+        }else{
+            removeRotation(previous, removeNode, true);
+            if(previousRoot->right->balance == 0) upOut(previousRoot);
+            else return;
+        }
+    }else if(previous->balance == -2){
+        auto previousRoot = previous->previous;
+        if(previousRoot == nullptr) {
+            removeRotation(previous, removeNode, false);
+        }
+        else if(previous == previousRoot->left){
+            removeRotation(previous, removeNode, false);
+            if(previousRoot->left->balance == 0) upOut(previousRoot);
+            else return;
+        }else{
+            removeRotation(previous, removeNode, false);
+            if(previousRoot->right->balance == 0) upOut(previousRoot);
+            else return;
+        }
+    }
+}
+
+void avlTree::removeRotation(avlTree::node* previous,avlTree::node* removeNode,bool leftSide){
+    delete removeNode;
+    auto previousRoot = previous->previous;
+    if(leftSide) {
+        previous->balance += 1;
+        previous->left = nullptr;
+        if (previous->left->right != nullptr) {
+            rotateLeft(previous->left);
+        } else {
+            rotateRight(previous->left);
+            rotateLeft(previous);
+        }
+    }
+    else{
+        previous->balance -= 1;
+        previous->right = nullptr;
+        if (previous->right->left != nullptr) {
+            rotateRight(previous->right);
+        } else {
+            rotateLeft(previous->right);
+            rotateRight(previous);
+        }
+    }
+}
+
+void avlTree::leafRight(avlTree::node* removeNode) {
+    auto previous = removeNode->previous;
+    if(previous == nullptr){
+        firstNode = removeNode->right;
+        return;
+    }
+    if (previous->left == removeNode) {
+        previous->left = removeNode->right;
+        previous->balance += 1;
+    } else {
+        previous->right = removeNode->right;
+        previous->balance -= 1;
+    }
+    upOut(previous);
+}
+
+void avlTree::leafLeft(avlTree::node* removeNode) {\
+    auto previous = removeNode->previous;
+    if(previous == nullptr){
+        firstNode = removeNode->left;
+        return;
+    }
+    if (previous->left == removeNode) {
+        previous->left = removeNode->left;
+        previous->balance += 1;
+    } else {
+        previous->right = removeNode->left;
+        previous->balance -= 1;
+    }
+    upOut(previous);
+}
+
+void avlTree::noLeaf(avlTree::node* removeNode) {
+    auto previous = removeNode->previous;
+    auto symmetricalFollower = removeNode->left;
+    while(symmetricalFollower->right != nullptr){
+        symmetricalFollower = symmetricalFollower->right;
+    }
+
+    int symmetricalFollowerKey = symmetricalFollower->key;
+
+    remove(symmetricalFollowerKey);
+
+    auto replaceNode = new node(symmetricalFollowerKey,previous,removeNode->left,removeNode->right,removeNode->balance);
+
+    if(previous == nullptr){
+        firstNode = replaceNode;
+    }else if(previous->right == removeNode){
+        previous->right = replaceNode;
+    }else{
+        previous->left = replaceNode;
+    }
+
+    removeNode->left = nullptr;
+    removeNode->right = nullptr;
+    delete removeNode;
+}
+
 
 //=========================================================================================
 //++++++++++++++++++++++++++++++++Node Methods++++++++++++++++++++++++++++++++++++++++++

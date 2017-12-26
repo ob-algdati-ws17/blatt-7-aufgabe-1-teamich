@@ -35,6 +35,16 @@ private:
 
     node* searchRecursive(node* start, int key, bool previous);
 
+    void noLeaf(node* removeNode);
+
+    void leafRight(node* removeNode);
+
+    void leafLeft(node* removeNode);
+
+    void twoLeafs(node* removeNode);
+
+    void removeRotation(node* previous,node* removeNode,bool leftSide);
+
     std::vector<int>* inOrder(node* start, std::vector<int>* v) const;
 
     std::vector<int>* preOrder(node* start, std::vector<int>* v) const;
@@ -48,7 +58,7 @@ public:
 
     bool search(int key);
 
-    bool remove(int key);
+    void remove(int key);
 
     std::vector<int>* preOrder() const;  // (Hauptreihenfolge)
 
