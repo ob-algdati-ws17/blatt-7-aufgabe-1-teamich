@@ -128,7 +128,48 @@ void avlTree::upIn(node* start) {
 }
 
 void avlTree::upOut(avlTree::node* start) {
-
+    if(start != nullptr && start->previous != nullptr) {
+        auto before = start->previous;
+        if (before->left == start) {
+            if (before->balance == -1) {
+                before->balance = 0;
+                upOut(before);
+            } else if (before->balance == 0) {
+                before->balance = 1;
+            } else {
+                auto right = before->right;
+                if (right->balance == 0) {
+                    rotateLeft(before);
+                } else if (right->balance == 1) {
+                    rotateLeft(right);
+                    upOut(right);
+                } else {
+                    rotateRight(right);
+                    rotateLeft(before);
+                    upOut(before->previous);
+                }
+            }
+        } else {
+            if (before->balance == -1) {
+                before->balance = 0;
+                upOut(before);
+            } else if (before->balance == 0) {
+                before->balance = 1;
+            } else {
+                auto left = before->left;
+                if (left->balance == 0) {
+                    rotateRight(before);
+                } else if (left->balance == 1) {
+                    rotateRight(left);
+                    upOut(left);
+                } else {
+                    rotateLeft(left);
+                    rotateRight(before);
+                    upOut(before->previous);
+                }
+            }
+        }
+    }
 }
 
 void avlTree::rotateLeft(node* rotate) {
